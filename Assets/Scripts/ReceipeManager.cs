@@ -25,7 +25,6 @@ public class ReceipeManager : MonoBehaviour
         {
             if (Images[i].name == name)
             {
-                Debug.Log(name);
                 return Images[i];
             }
         }
@@ -34,31 +33,30 @@ public class ReceipeManager : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (currentIngredientsIdx >= CurrentIngredients.Length)
-        {
-            currentIngredientsIdx = 0;
-        }
-
-        mixture.Add(collision.gameObject.name);
-        
+        Debug.Log(collision.gameObject.name);
         int i = 0;
         for (; i < Images.Length; i++)
         {
-            if (Images[i].name == gameObject.name)
+            if (Images[i].name == collision.gameObject.name || $"{Images[i].name}(Clone)" == collision.gameObject.name)
             {
-                break;
+                if (currentIngredientsIdx > CurrentIngredients.Length)
+                {
+                    currentIngredientsIdx = 0;
+                }
+
+                mixture.Add(collision.gameObject.name);
+
+                Sprite sprite = Sprite.Create(
+                    Images[i],
+                    new Rect(0, 0, Images[currentIngredientsIdx].width, Images[currentIngredientsIdx].height),
+                    new Vector2(0.5f, 0.5f)
+                );
+                CurrentIngredients[currentIngredientsIdx].sprite = sprite;
+                Destroy(collision.gameObject);
+
+                currentIngredientsIdx++;
             }
         }
-
-        Sprite sprite = Sprite.Create(
-            Images[i],
-            new Rect(0, 0, Images[currentIngredientsIdx].width, Images[currentIngredientsIdx].height),
-            new Vector2(0.5f, 0.5f)
-        );
-        CurrentIngredients[currentIngredientsIdx].sprite = sprite;
-        Destroy(collision.gameObject);
-
-        currentIngredientsIdx++;
     }
 
     public void Complete()
